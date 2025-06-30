@@ -21,7 +21,7 @@ class ApplyEyeAdaptationPass : ScriptableRenderPass
 	{
 		UniversalResourceData resourceData = frameData.Get<UniversalResourceData>( );
 
-		LuminanceComputePass.LuminanceFrameData luminanceFrameData = frameData.Get<LuminanceComputePass.LuminanceFrameData>( );
+		AverageLuminanceComputePass.LuminanceFrameData luminanceFrameData = frameData.Get<AverageLuminanceComputePass.LuminanceFrameData>( );
 
 		_eyeAdaptationMaterial.SetFloat( TargetEyeAdaptation, _targetLuminance ); 
 		

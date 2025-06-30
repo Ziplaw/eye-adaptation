@@ -18,7 +18,7 @@ class DebugLuminancePass : ScriptableRenderPass
 	{
 		UniversalResourceData resourceData = frameData.Get<UniversalResourceData>( );
 
-		LuminanceComputePass.LuminanceFrameData luminanceFrameData = frameData.Get<LuminanceComputePass.LuminanceFrameData>( );
+		AverageLuminanceComputePass.LuminanceFrameData luminanceFrameData = frameData.Get<AverageLuminanceComputePass.LuminanceFrameData>( );
 
 		var index = Mathf.FloorToInt( luminanceFrameData.luminanceTextures.Length * _luminanceToBlit );
 

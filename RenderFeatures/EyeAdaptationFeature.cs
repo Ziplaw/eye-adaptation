@@ -1,11 +1,15 @@
+using System;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.Serialization;
 
 public class EyeAdaptationFeature : ScriptableRendererFeature
 {
-    [Header("Config")]
-    [SerializeField] private ComputeShader averageLuminanceComputeShader;
-    [SerializeField] private Material _eyeAdaptationMaterial;
+    public enum EyeAdaptationTechnique {AverageLuminance, Histogram}
+
+    [Header("Config"), SerializeField] private EyeAdaptationTechnique technique;
+    [SerializeField] private ComputeShader luminanceComputeShader;
+    [SerializeField] private Material eyeAdaptationMaterial;
     [SerializeField, Range(4,128)] private int sizeReduction = 4;
     [SerializeField, Range(0,1)] private float targetLuminance = .5f;
     
@@ -19,10 +23,15 @@ public class EyeAdaptationFeature : ScriptableRendererFeature
 
     /// <inheritdoc/>
     public override void Create()
-    {
-        _luminanceComputePass = new LuminanceComputePass(averageLuminanceComputeShader, sizeReduction);
+    { 
+        _luminanceComputePass = technique switch
+        {
+            EyeAdaptationTechnique.AverageLuminance => new AverageLuminanceComputePass(luminanceComputeShader, sizeReduction),
+            EyeAdaptationTechnique.Histogram => new HistogramLuminanceComputePass(luminanceComputeShader),
+            _ => throw new ArgumentOutOfRangeException()
+        };
         _debugLuminancePass = new DebugLuminancePass( luminanceLevelToVisualize );
-        _applyEyeAdaptationPass = new ApplyEyeAdaptationPass( _eyeAdaptationMaterial, targetLuminance );
+        _applyEyeAdaptationPass = new ApplyEyeAdaptationPass( eyeAdaptationMaterial, targetLuminance );
 
         // Configures where the render pass should be injected.
         _luminanceComputePass.renderPassEvent = RenderPassEvent.AfterRenderingOpaques;
@@ -34,11 +43,21 @@ public class EyeAdaptationFeature : ScriptableRendererFeature
     // This method is called when setting up the renderer once per-camera.
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        if ( !SystemInfo.supportsComputeShaders || averageLuminanceComputeShader == null || _eyeAdaptationMaterial == null) return;
+        if (renderingData.cameraData.isSceneViewCamera || !SystemInfo.supportsComputeShaders || luminanceComputeShader == null || eyeAdaptationMaterial == null) return;
         
         renderer.EnqueuePass(_luminanceComputePass);
-        renderer.EnqueuePass(_applyEyeAdaptationPass);
-        if(debugLuminance) renderer.EnqueuePass(_debugLuminancePass);
+
+        switch (technique)
+        {
+            case EyeAdaptationTechnique.AverageLuminance:
+                renderer.EnqueuePass(_applyEyeAdaptationPass);
+                if(debugLuminance) renderer.EnqueuePass(_debugLuminancePass);
+                break;
+            case EyeAdaptationTechnique.Histogram:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     protected override void Dispose( bool disposing )
