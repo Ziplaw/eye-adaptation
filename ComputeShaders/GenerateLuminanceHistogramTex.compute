@@ -1,0 +1,10 @@
+#pragma kernel histogram_visualization
+
+RWStructuredBuffer<uint> _Histogram;
+RWTexture2D<float4> _Output;
+
+[numthreads(8,8,1)]
+void histogram_visualization(uint3 id : SV_DispatchThreadID)
+{
+    _Output[id.xy] = _Histogram[id.x] > id.y*500000;
+}

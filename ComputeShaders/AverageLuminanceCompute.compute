@@ -1,7 +1,6 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel luminance
 #pragma kernel luminance_mips
-#pragma kernel luminance_histogram
 
 RWTexture2D<float> _LuminanceTexture;
 Texture2D<float4> _CameraTexture;
@@ -44,24 +43,4 @@ void luminance_mips(uint3 id : SV_DispatchThreadID)
     }
 
     _LuminanceTexture[id.xy] = luminance / totalSamples;
-}
-
-groupshared int test;
-RWStructuredBuffer<int> test_output;
-
-[numthreads(8,1,1)]
-void luminance_histogram(uint3 id : SV_DispatchThreadID)
-{
-    // if(all(id.x == 0))
-    // {
-    //     test = 0;        
-    // }
-    // GroupMemoryBarrierWithGroupSync();
-    //
-    // int oldValue;
-    // InterlockedCompareExchange(test,1,0,oldValue);
-    //
-    // GroupMemoryBarrierWithGroupSync();
-    // test_output[id.x] = test;
-    test_output[id.x] = id.x;
 }
