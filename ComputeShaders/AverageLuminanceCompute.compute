@@ -1,0 +1,46 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel luminance
+#pragma kernel luminance_mips
+
+RWTexture2D<float> _LuminanceTexture;
+Texture2D<float4> _CameraTexture;
+Texture2D<float> _PreviousLuminanceTexture;
+float _Size;
+int2 _PreviousTextureSize;
+
+[numthreads(8,8,1)]
+void luminance(uint3 id : SV_DispatchThreadID)
+{
+    uint sizeX = min(_PreviousTextureSize.x, _Size);
+    uint sizeY = min(_PreviousTextureSize.y, _Size);
+
+    uint totalSamples = sizeX * sizeY;
+    
+    float luminance = 0;
+    // [unroll]
+    for (uint i = 0; i < totalSamples; ++i)
+    {
+        float3 cameraColor = _CameraTexture[id.xy * _Size + float2(i % sizeX, i / sizeY)].xyz;
+        luminance += (cameraColor.x + cameraColor.y + cameraColor.z) / 3;
+    }
+
+    _LuminanceTexture[id.xy] = luminance / totalSamples;
+}
+
+[numthreads(8,8,1)]
+void luminance_mips(uint3 id : SV_DispatchThreadID)
+{
+    uint sizeX = min(_PreviousTextureSize.x, _Size);
+    uint sizeY = min(_PreviousTextureSize.y, _Size);
+
+    uint totalSamples = sizeX * sizeY;
+    
+    float luminance = 0;
+    // [unroll]
+    for (uint i = 0; i < totalSamples; ++i)
+    {
+        luminance += _PreviousLuminanceTexture[id.xy * _Size + float2(i % sizeX, i / sizeY)];
+    }
+
+    _LuminanceTexture[id.xy] = luminance / totalSamples;
+}
