@@ -16,7 +16,6 @@ Shader "ApplyEyeAdaptation"
            #pragma fragment Frag
 
            TEXTURE2D_X(_CameraOpaqueTexture);
-           float _TargetEyeAdaptation;
 
            half GammaCorrect_half(half linearColor)
            {
@@ -31,12 +30,12 @@ Shader "ApplyEyeAdaptation"
 
                // sample the texture using the SAMPLE_TEXTURE2D_X_LOD
                float2 uv = input.texcoord.xy;
-               half4 color = SAMPLE_TEXTURE2D_X_LOD(_CameraOpaqueTexture, sampler_LinearRepeat, uv, _BlitMipLevel);
+               half4 color = SAMPLE_TEXTURE2D_X_LOD(_CameraOpaqueTexture, sampler_LinearClamp, uv, _BlitMipLevel);
                float luminance = GammaCorrect_half(SAMPLE_TEXTURE2D_X_LOD(_BlitTexture, sampler_LinearRepeat, float2(0,0), _BlitMipLevel).x) ;
                
                
                // Modify the sampled color
-               return color + ( _TargetEyeAdaptation - luminance);
+               return color * luminance;
            }
 
            ENDHLSL

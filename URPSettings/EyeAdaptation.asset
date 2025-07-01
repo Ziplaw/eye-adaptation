@@ -66,9 +66,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   technique: 1
+  filtering: {x: 1, y: 99}
+  minEV: 0
+  maxEV: 9
+  _eyeAdaptationType: 1
+  _computeHistogramComputeShader: {fileID: 7200000, guid: 712e1c7d29cf5724f8d7c5b970563fd4, type: 3}
+  _debugHistogramComputeShader: {fileID: 7200000, guid: 5369315d4e3ff6549bf647c08f608666, type: 3}
+  _autoExposureComputeShader: {fileID: 7200000, guid: 942b91fa6ee68c644a04ca8a69e761ee, type: 3}
+  _speedUp: 2
+  _speedDown: 2
+  _exposureCompensation: 1.52
   luminanceComputeShader: {fileID: 7200000, guid: 0154c9737226ed2408312d6dea8151f3, type: 3}
-  computeHistogramComputeShader: {fileID: 7200000, guid: 712e1c7d29cf5724f8d7c5b970563fd4, type: 3}
-  debugHistogramComputeShader: {fileID: 7200000, guid: 5369315d4e3ff6549bf647c08f608666, type: 3}
   eyeAdaptationMaterial: {fileID: 2100000, guid: 5667611b62f39124c9438d32c60d0c0c, type: 2}
   sizeReduction: 4
   targetLuminance: 0.209

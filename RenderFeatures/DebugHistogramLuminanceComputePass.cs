@@ -16,8 +16,8 @@ public class DebugHistogramLuminanceComputePass : LuminanceComputePass
 		_debugHistogramComputeShader = debugHistogramComputeShader;
 		RenderTextureDescriptor desc = new RenderTextureDescriptor
 		(
-			ComputeLuminanceHistogram.k_Bins,
-			ComputeLuminanceHistogram.k_Bins,
+			ComputeLuminanceHistogramPrePass.k_Bins,
+			ComputeLuminanceHistogramPrePass.k_Bins,
 			GraphicsFormat.R32_SFloat,
 			0,
 			1)
@@ -40,7 +40,7 @@ public class DebugHistogramLuminanceComputePass : LuminanceComputePass
 	{
 		UniversalResourceData resourceData = frameData.Get<UniversalResourceData>( );
 
-		var logHistogramFrameData = frameData.Get<ComputeLuminanceHistogram.LuminanceHistogramFrameData>();
+		var logHistogramFrameData = frameData.Get<ComputeLuminanceHistogramPrePass.LuminanceHistogramFrameData>();
 		var textureHandle = renderGraph.ImportTexture(_debugTextureHandle);
 
 		using (var builder = renderGraph.AddComputePass("Apply Luminance Histogram", out PassData passData))
@@ -54,7 +54,7 @@ public class DebugHistogramLuminanceComputePass : LuminanceComputePass
 			{
 				context.cmd.SetComputeBufferParam(_debugHistogramComputeShader,0,"_Histogram",data.histogramHandle);
 				context.cmd.SetComputeTextureParam(_debugHistogramComputeShader,0,"_Output",textureHandle);
-				context.cmd.DispatchCompute(_debugHistogramComputeShader,0,ComputeLuminanceHistogram.k_Bins/8,ComputeLuminanceHistogram.k_Bins/8,1);
+				context.cmd.DispatchCompute(_debugHistogramComputeShader,0,ComputeLuminanceHistogramPrePass.k_Bins/8,ComputeLuminanceHistogramPrePass.k_Bins/8,1);
 			});
 		}
 

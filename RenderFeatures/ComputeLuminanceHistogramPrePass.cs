@@ -3,15 +3,14 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
 
-public class ComputeLuminanceHistogram : LuminanceComputePass
+public class ComputeLuminanceHistogramPrePass : LuminanceComputePass
 {
     private readonly ComputeShader _exposureHistogramComputeShader;
     private GraphicsBuffer _histogramBuffer;
-    public const int rangeMin = -9; // ev
-    public const int rangeMax = 9; // ev
+    
     public const int k_Bins = 128; // number of bins for the histogram
 
-    public ComputeLuminanceHistogram(ComputeShader exposureHistogramComputeShader)
+    public ComputeLuminanceHistogramPrePass(ComputeShader exposureHistogramComputeShader)
     {
         _exposureHistogramComputeShader = exposureHistogramComputeShader;
         _histogramBuffer = new GraphicsBuffer( GraphicsBuffer.Target.Structured,k_Bins, sizeof(uint));
@@ -73,14 +72,6 @@ public class ComputeLuminanceHistogram : LuminanceComputePass
                 1
             );
         });
-    }
-    
-    public Vector4 GetHistogramScaleOffsetRes()
-    {
-        float diff = rangeMax - rangeMin;
-        float scale = 1f / diff;
-        float offset = -rangeMin * scale;
-        return new Vector4(scale, offset, Screen.width, Screen.height);
     }
 
     public override void Cleanup()
