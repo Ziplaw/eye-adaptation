@@ -3,7 +3,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.Universal;
 
-public class ComputeLuminanceHistogramPrePass : LuminanceComputePass
+public class ComputeLuminanceHistogramPrePass : ScriptableRenderPass
 {
     private readonly ComputeShader _exposureHistogramComputeShader;
     private GraphicsBuffer _histogramBuffer;
@@ -50,7 +50,7 @@ public class ComputeLuminanceHistogramPrePass : LuminanceComputePass
         //based on Built-In PostProcessing/LogHistogram.cs
         builder.SetRenderFunc<PassData>((data, context) =>
         {
-            var scaleOffsetRes = GetHistogramScaleOffsetRes();
+            var scaleOffsetRes = LuminanceHistogramUtils.GetHistogramScaleOffsetRes();
 
             // Clear the buffer on every frame as we use it to accumulate luminance values on each frame
             int kernel = _exposureHistogramComputeShader.FindKernel("KEyeHistogramClear");
@@ -74,7 +74,7 @@ public class ComputeLuminanceHistogramPrePass : LuminanceComputePass
         });
     }
 
-    public override void Cleanup()
+    public void Cleanup()
     {
         _histogramBuffer?.Release();
         _histogramBuffer = null;

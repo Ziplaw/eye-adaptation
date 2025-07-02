@@ -6,7 +6,7 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
-public class DebugHistogramLuminanceComputePass : LuminanceComputePass
+public class DebugHistogramLuminanceComputePass : ScriptableRenderPass
 {
 	private readonly ComputeShader _debugHistogramComputeShader;
 	private RTHandle _debugTextureHandle;
@@ -59,10 +59,5 @@ public class DebugHistogramLuminanceComputePass : LuminanceComputePass
 		}
 
 		renderGraph.AddBlitPass(textureHandle, resourceData.cameraColor,Vector2.one, Vector2.zero);
-	}
-
-	public override void Cleanup() 
-	{
-		
 	}
 }

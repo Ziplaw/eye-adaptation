@@ -7,7 +7,7 @@ using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
-public class ApplyHistogramAutoExposurePass : LuminanceComputePass
+public class ApplyHistogramAutoExposurePass : ScriptableRenderPass
 {
     private static readonly int HistogramLuminanceTexture = Shader.PropertyToID( "_HistogramLuminanceTexture" );
     
@@ -151,7 +151,7 @@ public class ApplyHistogramAutoExposurePass : LuminanceComputePass
                 ctx.cmd.SetComputeBufferParam(compute, kernel, "_HistogramBuffer", data.histogramHandle);
                 ctx.cmd.SetComputeVectorParam(compute, "_Params1", new Vector4(data.lowPercent * 0.01f, data.highPercent * 0.01f, RuntimeUtilities.Exp2(data.minMaxLuminance.x), RuntimeUtilities.Exp2(data.minMaxLuminance.y)));
                 ctx.cmd.SetComputeVectorParam(compute, "_Params2", new Vector4(data.speedDown, data.speedUp, data.exposureCompensation, Time.deltaTime));
-                ctx.cmd.SetComputeVectorParam(compute, "_ScaleOffsetRes", GetHistogramScaleOffsetRes());
+                ctx.cmd.SetComputeVectorParam(compute, "_ScaleOffsetRes", LuminanceHistogramUtils.GetHistogramScaleOffsetRes());
 
                 ctx.cmd.SetComputeTextureParam(compute, kernel, "_Source", data.source);
                 ctx.cmd.SetComputeTextureParam(compute, kernel, "_Destination", data.destination);
@@ -168,7 +168,7 @@ public class ApplyHistogramAutoExposurePass : LuminanceComputePass
         // renderGraph.AddBlitPass(_currentTexture, resourceData.cameraColor,Vector2.one, Vector2.zero);
     }
 
-    public override void Cleanup()
+    public void Cleanup()
     {
         if (_autoExposureHandles != null)
         {
