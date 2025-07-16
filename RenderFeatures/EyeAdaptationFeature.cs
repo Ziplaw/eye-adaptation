@@ -5,17 +5,17 @@ using UnityEngine.Serialization;
 
 public class EyeAdaptationFeature : ScriptableRendererFeature
 {
-    public enum EyeAdaptationType {Fixed, Progressive}
-    [Header("Config")]
-    [/*MinMax(1f, 99f),*/ SerializeField] private Vector2 filtering = new(0,99); 
-    [/*MinMax(-9, 9),*/ SerializeField] private float minEV = -9; 
-    [/*MinMax(-9, 9),*/ SerializeField] private float maxEV = 9;
-    [SerializeField] private EyeAdaptationType _eyeAdaptationType;
+    [Header("Setup"),SerializeField] private EyeAdaptationType _eyeAdaptationType;
     [SerializeField] private Material eyeAdaptationMaterial;
     [SerializeField] private ComputeShader _computeHistogramComputeShader;
     [SerializeField] private ComputeShader _autoExposureComputeShader;
-    [SerializeField] private float _speedUp = 5;
-    [SerializeField] private float _speedDown = 5;
+    public enum EyeAdaptationType {Fixed, Progressive}
+    [Header("Config")]
+    [/*MinMax(1f, 99f),*/ SerializeField] private Vector2 filtering = new(0,99); 
+    [Range(-9, 9), SerializeField] private float minEV = -9; 
+    [Range(-9, 9), SerializeField] private float maxEV = 9;
+    [Range(0,10),SerializeField] private float _speedUp = 5;
+    [Range(0,10),SerializeField] private float _speedDown = 5;
     [SerializeField, Range(-9,9)] private float _exposureCompensation;
 
 
