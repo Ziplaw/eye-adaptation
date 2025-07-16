@@ -2,7 +2,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
-using UnityEngine.Rendering.PostProcessing;
 using UnityEngine.Rendering.RenderGraphModule;
 using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
@@ -149,7 +148,7 @@ public class ApplyHistogramAutoExposurePass : ScriptableRenderPass
             builder.SetRenderFunc<PassData>((data, ctx) =>
             {
                 ctx.cmd.SetComputeBufferParam(compute, kernel, "_HistogramBuffer", data.histogramHandle);
-                ctx.cmd.SetComputeVectorParam(compute, "_Params1", new Vector4(data.lowPercent * 0.01f, data.highPercent * 0.01f, RuntimeUtilities.Exp2(data.minMaxLuminance.x), RuntimeUtilities.Exp2(data.minMaxLuminance.y)));
+                ctx.cmd.SetComputeVectorParam(compute, "_Params1", new Vector4(data.lowPercent * 0.01f, data.highPercent * 0.01f, Mathf.Pow(2,data.minMaxLuminance.x), Mathf.Pow(2,data.minMaxLuminance.y)));
                 ctx.cmd.SetComputeVectorParam(compute, "_Params2", new Vector4(data.speedDown, data.speedUp, data.exposureCompensation, Time.deltaTime));
                 ctx.cmd.SetComputeVectorParam(compute, "_ScaleOffsetRes", LuminanceHistogramUtils.GetHistogramScaleOffsetRes());
 
